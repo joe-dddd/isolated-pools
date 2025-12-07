@@ -16,6 +16,7 @@ import "solidity-coverage";
 import "solidity-docgen";
 
 import { convertToUnit } from "./helpers/utils";
+import "./tasks/twap";
 
 dotenv.config();
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
@@ -42,10 +43,11 @@ extendConfig((config: HardhatConfig) => {
       deployments: {
         hardhat: [],
         bsctestnet: [
-          "node_modules/@venusprotocol/oracle/deployments/bsctestnet",
-          "node_modules/@venusprotocol/venus-protocol/deployments/bsctestnet",
-          "node_modules/@venusprotocol/protocol-reserve/deployments/bsctestnet",
-          "node_modules/@venusprotocol/governance-contracts/deployments/bsctestnet",
+          // Disabled external deployments for fresh fork deployment
+          // "node_modules/@venusprotocol/oracle/deployments/bsctestnet",
+          // "node_modules/@venusprotocol/venus-protocol/deployments/bsctestnet",
+          // "node_modules/@venusprotocol/protocol-reserve/deployments/bsctestnet",
+          // "../governance-contracts/deployments/bsctestnet",
         ],
         sepolia: [
           "node_modules/@venusprotocol/oracle/deployments/sepolia",

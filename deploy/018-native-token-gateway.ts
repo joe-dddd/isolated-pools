@@ -26,12 +26,12 @@ interface VTokenConfig {
 }
 
 const VWNativeInfo: { [key: string]: VTokenConfig[] } = {
-  bsctestnet: [
+  bsctestnet: ilBscTestnet.VToken_vWBNB_LiquidStakedBNB ? [
     {
       name: "vWBNB_LiquidStakedBNB",
       address: ilBscTestnet.VToken_vWBNB_LiquidStakedBNB.address,
     },
-  ],
+  ] : [],
   bscmainnet: [
     {
       name: "vWBNB_LiquidStakedBNB",

@@ -209,11 +209,13 @@ export const preconfiguredAddresses = {
   },
   bsctestnet: {
     VTreasury: venusProtocolBscTestnet.VTreasury.address,
-    NormalTimelock: governanceBscTestnet.NormalTimelock.address,
-    FastTrackTimelock: governanceBscTestnet.FastTrackTimelock.address,
-    CriticalTimelock: governanceBscTestnet.CriticalTimelock.address,
+    // Override to use deployer directly (no Timelock in this fork)
+    NormalTimelock: "account:deployer",
+    FastTrackTimelock: "account:deployer",
+    CriticalTimelock: "account:deployer",
     GovernorBravo: governanceBscTestnet.GovernorBravoDelegator.address,
-    AccessControlManager: governanceBscTestnet.AccessControlManager.address,
+    // Use our deployed ACM: 0x32C58b4Ed4dfB03e7D09C5D50D417639BE63cc0E
+    AccessControlManager: "0x32C58b4Ed4dfB03e7D09C5D50D417639BE63cc0E",
     PancakeFactory: venusProtocolBscTestnet.pancakeFactory.address,
     WBNB: venusProtocolBscTestnet.WBNB.address,
     VBNB_CorePool: venusProtocolBscTestnet.vBNB.address,

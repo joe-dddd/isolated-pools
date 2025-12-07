@@ -22,10 +22,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { isTimeBased, blocksPerYear } = getBlockOrTimestampBasedDeploymentInfo(hre.getNetworkName());
   const maxBorrowRateMantissa = getMaxBorrowRateMantissa(hre.network.name);
 
-  if (networkName === "bscmainnet" || networkName === "bsctestnet" || networkName === "hardhat") {
-    await timelocksDeployment(hre);
-  }
-  const timelock = await toAddress(preconfiguredAddresses.NormalTimelock || "NormalTimelock");
+  // Skip timelocks deployment for simplified fork - we use deployer as owner
+  // if (networkName === "bscmainnet" || networkName === "bsctestnet" || networkName === "hardhat") {
+  //   await timelocksDeployment(hre);
+  // }
+  const timelock = await toAddress(preconfiguredAddresses.NormalTimelock || "account:deployer");
 
   const accessControlManagerAddress = await toAddress(
     preconfiguredAddresses.AccessControlManager || "AccessControlManager",
@@ -138,7 +139,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       const VToken = await ethers.getContractFactory("VToken");
       const underlyingDecimals = Number(await tokenContract.decimals());
       const vTokenDecimals = 8;
-      let protocolShareReserveAddress;
+      let protocolShareReserveAddress: string;
+
+      // Our deployed PSR on bsctestnet
+      const OUR_PSR_ADDRESS = "0x7faa7e637a9aa02E8a5a814F69e73f4288188Ca3";
+
       try {
         protocolShareReserveAddress = (await ethers.getContract("ProtocolShareReserve")).address;
       } catch (e) {
@@ -146,6 +151,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           console.warn("ProtocolShareReserve contract not found. Deploying address");
           await deployProtocolShareReserve(hre);
           protocolShareReserveAddress = (await ethers.getContract("ProtocolShareReserve")).address;
+        } else if (networkName === "bsctestnet") {
+          console.warn("Using our deployed ProtocolShareReserve:", OUR_PSR_ADDRESS);
+          protocolShareReserveAddress = OUR_PSR_ADDRESS;
         } else {
           throw e;
         }
