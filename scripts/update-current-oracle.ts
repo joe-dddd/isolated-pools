@@ -5,7 +5,7 @@ const TKN = "0x950cfF4A2d0454B20A07159699A0Df5370751814";
 const WBNB = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
 
 async function main() {
-  console.log("\n=== Updating Oracle Prices ===");
+  console.log("\n=== Updating Oracle Prices (Current Deployment) ===");
   console.log(`Oracle: ${ORACLE}`);
   console.log(`TKN: ${TKN}`);
   console.log(`WBNB: ${WBNB}`);

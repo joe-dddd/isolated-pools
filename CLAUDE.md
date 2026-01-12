@@ -190,3 +190,46 @@ Venus Isolated Pools - A DeFi protocol implementing isolated lending pools on mu
 - Custom risk parameters per pool
 - Easier new token listings
 - Per-pool reward customization
+
+## Critical Deployment Patterns
+
+### PancakeV2TWAPOracle Initialization
+
+**CRITICAL**: TWAP oracles require 2-step setup before assets can be borrowed/supplied:
+
+1. `addPair(asset, lpPair)` - Adds pair configuration, sets `initialized: false`
+2. `updateAssetPrice(asset)` - **REQUIRED** - Sets `initialized: true` and calculates initial TWAP
+
+**Failure mode**: If `updateAssetPrice()` not called after `addPair()`, all borrow/supply transactions will revert with `NotInitialized()` when Comptroller tries to fetch price.
+
+**Example** (scripts/add-tkn-to-oracle.ts):
+```typescript
+// Add pair
+const tx = await oracle.addPair(TKN, TKN_USDT_LP);
+await tx.wait();
+
+// Initialize price (REQUIRED before oracle can be used)
+const tx2 = await oracle.updateAssetPrice(TKN);
+await tx2.wait();
+```
+
+**Root cause reference**: Transaction 0xe9d5296df82d109dcd151f97cab80e6ba297ecd400701ecb3e017ef64a78c495 failed due to missing price initialization for MockTKN.
+
+**Code location**: contracts/Oracle/PancakeV2TWAPOracle.sol:206 (`NotInitialized()` revert in `_getPriceUsdt()`)
+## RewardsDistributor (bsctestnet, TransparentUpgradeableProxy)
+
+Deployment in this fork uses a TransparentUpgradeableProxy with a dedicated ProxyAdmin (so the deployer can call the implementation through the proxy).
+
+Script:
+- `scripts/deploy-rewards-distributor-alpha-proxy.ts`
+
+Flow:
+1) Deploy `RewardsDistributorImpl` with `args: [isTimeBased, blocksPerYear]`
+2) Deploy `ProxyAdmin_Alpha` with `args: [deployer]`
+3) Deploy proxy `RewardsDistributor_Alpha_Proxy_Admin` with:
+   - `proxyContract: "OptimizedTransparentUpgradeableProxy"`
+   - `owner: ProxyAdmin_Alpha.address`
+   - `execute.initialize(comptroller, rewardToken, maxLoopsLimit, accessControlManager)`
+
+Latest bsctestnet proxy:
+- `0x7D00000372E19c8D409067B3802554976a175b84`

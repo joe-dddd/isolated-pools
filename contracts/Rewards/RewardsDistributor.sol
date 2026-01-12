@@ -310,6 +310,16 @@ contract RewardsDistributor is
     }
 
     /**
+     * @notice Set the comptroller address
+     * @param comptroller_ The new comptroller address
+     * @custom:access Only owner
+     */
+    function setComptroller(Comptroller comptroller_) external onlyOwner {
+        require(address(comptroller_) != address(0), "comptroller cannot be zero address");
+        comptroller = comptroller_;
+    }
+
+    /**
      * @notice Calculate additional accrued REWARD TOKEN for a contributor since last accrual
      * @param contributor The address to calculate contributor rewards for
      */

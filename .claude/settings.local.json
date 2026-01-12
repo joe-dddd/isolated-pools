@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(VALPHA=0x664a7313c341931b1a44A8f23db76E1D3E6a5e07 yarn hardhat run:*)",
+      "Bash(yarn hardhat run:*)"
+    ]
+  }
+}
